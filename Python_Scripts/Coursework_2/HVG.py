@@ -24,7 +24,7 @@ def get_series(n, stype = 0):
 
         elif stype == 2:    # Create sinusoid series
             term = sin((2*pi)*500*(i/10000))    # Both 'sin' and 'pi' used from 'math' library
-            series.append(term)
+            series.append(round(term, 3))
 
     return series
 
@@ -125,6 +125,10 @@ def find_items_between(start_index, end_index, series):
 def highest_value_in_list(series):
     # Find highest in-between
     greatest = 0
+
+    if len(series) > 0:
+        greatest = series[0]
+
     for n in series:
         if n >= greatest:
             greatest = n
@@ -166,8 +170,10 @@ def print_hvg(hvg):
     # Loop through list printing every item with space between for readability
     for i in range(len(hvg)):
         for j in range(len(hvg)):
-            print(hvg[i][j], end="")
+            print(hvg[i][j], end=" ")
         print("")
+
+    print("")
 
 
 def process_logisticmap(params, steps = 100):
@@ -191,9 +197,9 @@ if __name__ == "__main__":
     # print_hvg(horizontal_visibility_graph(list_of_numbers, True))
 
     # CALCULATE SERIES
-    monotonic = get_series(10, 0)
-    alternating = get_series(10, 1)
-    sinusoid = get_series(10, 2)
+    monotonic = get_series(30, 0)
+    alternating = get_series(30, 1)
+    sinusoid = get_series(30, 2)
 
     # SERIES PRINTS
     print(monotonic)
@@ -210,7 +216,7 @@ if __name__ == "__main__":
     logisticmap_dictionary = process_logisticmap(logistic_parameters)
 
     for key, value in logisticmap_dictionary.items():
-        print("Key: ", key, ", Values: ", value)
+        print("Key: ", key)
         print_hvg(value)
 
 
