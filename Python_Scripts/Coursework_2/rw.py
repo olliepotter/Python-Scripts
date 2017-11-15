@@ -127,7 +127,7 @@ def count_edges(adj_matrix, row_index):
 
     :param adj_matrix: Horizontal visibility graph encoded in matrix format
     :param row_index: The index of the row for edges to be counted
-    :return:
+    :return: The number of edges present the given row
     """
     row = adj_matrix[row_index]
     count = 0
@@ -147,7 +147,7 @@ def find_initial_vertex_dist(adj_matrix, biased=False, alpha=0):
     :param adj_matrix: Horizontal visibility graph encoded in matrix form
     :param biased: Decides whether to calculate for biased / unbiased walk
     :param alpha: Parameter used in random walk calculations
-    :return:
+    :return: A list containing the probability distribution for the initial vertex
     """
     total_ones = 0
     ones_in_row = []
