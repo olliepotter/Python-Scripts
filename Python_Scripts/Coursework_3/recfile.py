@@ -97,6 +97,13 @@ def find_smaller(path, max_n_results=10):
 
 
 def find_type(path, max_n_results=10):
+    """
+
+
+    :param path:
+    :param max_n_results:
+    :return:
+    """
 
     # GET FILE PATHS
     paths = visit(path, lambda file: True if file.endswith(".txt") else False, max_n_results)
@@ -132,7 +139,7 @@ def print_list(any_list):
 
 
 counter = 0
-print(choose.run_time(find_type, "C:/"))
+print(choose.run_time(find_type, "C:/", 20))
 print()
 # find_smaller("..\Coursework_3")
 
