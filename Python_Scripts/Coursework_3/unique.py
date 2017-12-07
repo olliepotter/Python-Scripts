@@ -130,7 +130,7 @@ def run_time(func, *args):
 
 def test_func():
     """
-    Function to compare run time of functions unique() and sort_unique() on
+    Compare run time of functions unique() and sort_unique() on
         randomly generated sequences of increasing size
     """
 
