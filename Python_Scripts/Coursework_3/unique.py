@@ -2,7 +2,7 @@ from Coursework_3.choose import run_time
 from random import random
 
 
-def search(sequence, query, quick=False):
+def search(sequence, query):
     """
     Finds an item 'query' in a sorted list
 
@@ -25,44 +25,14 @@ def search(sequence, query, quick=False):
     # BINARY SEARCH
     while start_pointer <= end_pointer:
 
-        # MIDPOINT BETWEEN START AND END POINTER
-        midpoint = (start_pointer + end_pointer) // 2
+        midpoint = (start_pointer + end_pointer) // 2   # Find midpoint
 
-        # IF FIND RESULT THEN RETURN
-        if sequence[midpoint] == query:
-            if quick:
-                return midpoint
-            else:
-                return lowest_index(midpoint, sequence)
-
-        # UPDATE START OR END POINTER TO BECOME MIDPOINT
-        elif query < sequence[midpoint]:
+        if query <= sequence[midpoint]:     # Update pointers respectively
             end_pointer = midpoint - 1
         else:
             start_pointer = midpoint + 1
 
-    if quick:
-        return start_pointer
-    else:
-        return lowest_index(start_pointer, sequence)
-
-
-def lowest_index(pointer, sequence):
-
-    # INITIAL CHECK
-    if pointer == 0:
-        return 0
-
-    # MOVE POINTER TO THE LEFT UNTIL FIRST ITEM FOUND
-    while True:
-
-        item_to_left = pointer - 1
-
-        if sequence[pointer] != sequence[item_to_left]:
-            return pointer
-
-        else:
-            pointer -= 1
+    return start_pointer
 
 
 def make_random_seq(dim):
@@ -95,7 +65,7 @@ def insertion(sequence):
     for item in sequence:
 
         # FIND WHERE TO INSERT THEN INSERT
-        index = search(sorted_list, item, True)
+        index = search(sorted_list, item)
         sorted_list.insert(index, item)
 
     return sorted_list
@@ -131,7 +101,7 @@ def unique(sequence):
     for item in sequence:
 
         # FIND WHERE TO INSERT THE ITEM
-        point_to_insert = search(sorted_list, item, True)
+        point_to_insert = search(sorted_list, item)
 
         # ITEM TO BE INSERTED AT END OF LIST
         if point_to_insert > len(sorted_list) - 1:
@@ -145,7 +115,7 @@ def unique(sequence):
 
 
 def test_func():
-    
+
     for i in range(int(1e4), int(2.1e5), int(2e4)):
         sequence = make_random_seq(i)
         u_time = run_time(unique, sequence)
@@ -159,5 +129,7 @@ def test_func():
 if __name__ == "__main__":
 
     test_func()
+    # list = [1, 2, 2, 2, 2, 2, 2, 3, 4, 5, 5, 6]
+    # print(search(list, 5))
 
 
