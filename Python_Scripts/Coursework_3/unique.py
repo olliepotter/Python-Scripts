@@ -1,5 +1,5 @@
-from Coursework_3.choose import run_time
 from random import random
+from time import clock
 
 
 def search(sequence, query):
@@ -15,12 +15,6 @@ def search(sequence, query):
     # INITIALISE POINTERS
     start_pointer = 0
     end_pointer = len(sequence) - 1
-
-    # INITIAL CHECKS
-    if len(sequence) == 0:
-        return 0
-    elif query > sequence[-1]:
-        return len(sequence)
 
     # BINARY SEARCH
     while start_pointer <= end_pointer:
@@ -46,7 +40,7 @@ def make_random_seq(dim):
     random_list = []
 
     for i in range(dim):
-        random_list.append(int(random()*101))
+        random_list.append(int(random()*101))   # *101 to get values [0,100]
 
     return random_list
 
@@ -61,12 +55,10 @@ def insertion(sequence):
 
     sorted_list = []
 
-    # LOOP THROUGH ALL TERMS
     for item in sequence:
 
-        # FIND WHERE TO INSERT THEN INSERT
-        index = search(sorted_list, item)
-        sorted_list.insert(index, item)
+        index = search(sorted_list, item)   # Find where to insert
+        sorted_list.insert(index, item)     # Then insert
 
     return sorted_list
 
@@ -86,7 +78,7 @@ def sort_unique(sequence):
 
     for item in sorted_list:
 
-        if item in unique:
+        if item in unique:      # If in list, skip
             continue
         else:
             unique.append(item)
@@ -95,41 +87,72 @@ def sort_unique(sequence):
 
 
 def unique(sequence):
+    """
+    Constructs a list from sequence that contains one copy of each element
+        in order
+
+    :param sequence: A list of elements
+    :return: A sorted list, containing one copy of each element
+    """
 
     sorted_list = []
 
     for item in sequence:
 
-        # FIND WHERE TO INSERT THE ITEM
-        point_to_insert = search(sorted_list, item)
+        point_to_insert = search(sorted_list, item)  # Find where to insert
 
-        # ITEM TO BE INSERTED AT END OF LIST
-        if point_to_insert > len(sorted_list) - 1:
+        if point_to_insert > len(sorted_list) - 1:   # Insert at end of list
             sorted_list.append(item)
 
-        # INSERT INTO LIST
-        elif sorted_list[point_to_insert] != item:
+        elif sorted_list[point_to_insert] != item:   # Insert at 'index'
             sorted_list.insert(point_to_insert, item)
 
     return sorted_list
 
 
+def run_time(func, *args):
+    """
+    Calculate the run time of a function
+
+    :param func: function to be tested
+    :param args: arguments to be passed to function
+    :return: runtime of the function in seconds
+    """
+    start = clock()
+
+    # RUN GIVEN FUNCTION
+    func(*args)
+
+    end = clock()
+
+    return end-start
+
+
 def test_func():
+    """
+    Function to compare run time of functions unique() and sort_unique() on
+        randomly generated sequences of increasing size
+    """
 
     for i in range(int(1e4), int(2.1e5), int(2e4)):
-        sequence = make_random_seq(i)
-        u_time = run_time(unique, sequence)
-        su_time = run_time(sort_unique, sequence)
 
-        print(i, "u: ", u_time, end=" ")
-        print("su: ", su_time, end=" ")
-        print("ratio: ", su_time/u_time)
+        # CREATE SEQUENCE
+        sequence = make_random_seq(i)
+
+        # CALCULATE TIMES AND RATIO
+        u_time = round(run_time(unique, sequence), 3)
+        su_time = round(run_time(sort_unique, sequence), 3)
+        ratio = round(su_time / u_time, 2)
+
+        # PRINT RESULTS
+        print(' ' * (6 - len(str(i))), i, 'u:', u_time, end="")
+        print(' ' * (6 - len(str(u_time))), 'su:', su_time, end="")
+        print(' ' * (6 - len(str(su_time))), 'ratio:', ratio)
 
 
 if __name__ == "__main__":
 
+    # MAIN PROGRAM
     test_func()
-    # list = [1, 2, 2, 2, 2, 2, 2, 3, 4, 5, 5, 6]
-    # print(search(list, 5))
 
 
