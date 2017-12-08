@@ -126,7 +126,6 @@ def print_dictionary(dictionary):
 
     for path, size in dictionary.items():   # List through all items
         print(' ' * (8 - len(str(size))), size, ' ' * 4, path)
-        # print("    ", size, "    ", path)   # Print items
 
 
 def create_sorted_dictionary(paths, ascending):
