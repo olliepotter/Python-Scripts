@@ -28,11 +28,6 @@ def visit(dname, pass_test_func, max_n_results, no_files_found=[], first_run = T
 
                 path = os.path.join(dname, f)
 
-                if "$WINDOWS.~BT" in path:
-                    continue
-                elif "JetBrains" in path:
-                    continue
-
                 # BASE CASE - IF FILE THEN STOP
                 if os.path.isfile(path):
                     if len(no_files_found) < max_n_results:
