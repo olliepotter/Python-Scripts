@@ -47,6 +47,15 @@ def sierpinski_triangle(dim, choose_func, display):
     return triangle
 
 
+
+
+
+
+
+
+
+
+
 def run_time(func, *args):
     """
     Calculate the run time of a function
