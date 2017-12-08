@@ -126,6 +126,7 @@ def choose_mem(n, k):
         return choose_value
 
 
+    
 def test_choose_mem(triangle_size):
     """
     Computes and prints the runtime of the function sierpinski_triangle using
