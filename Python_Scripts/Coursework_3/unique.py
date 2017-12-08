@@ -52,6 +52,9 @@ def make_random_seq(dim):
 
 
 
+
+
+
 def insertion(sequence):
     """
     Build a new list from sequence inserting each item in the correct place
