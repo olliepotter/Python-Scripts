@@ -1,7 +1,6 @@
 from random import random
 from time import clock
 
-
 def search(sequence, query):
     """
     Finds an item 'query' in a sorted list
@@ -43,7 +42,6 @@ def make_random_seq(dim):
         random_list.append(int(random()*101))   # *101 to get values [0,100]
 
     return random_list
-
 
 
 
