@@ -3,7 +3,7 @@ from time import clock
 
 def sierpinski_triangle(dim, choose_func, display):
     """
-    Creates the Sierpinski Triangle up to a given size
+    Creates the Sierpinski Triangle of a given size
 
     :param dim: Size of the triangle
     :param choose_func: Function to compute binomial coefficient
@@ -11,26 +11,26 @@ def sierpinski_triangle(dim, choose_func, display):
     :return: The Sierpinski Triangle of the given size
     """
 
+    # CHECK POSITIVE INTEGER
+    assert dim >= 0 and type(dim) == int
+
     triangle = []
 
     # BUILD SIERPINSKI TRIANGLE
     for i in range(dim):
 
-        # START EACH ROW WITH 1, I.E *
-        row = ["*"]
+        row = ["*"]     # Start each row with 1, I.E *
 
         for j in range(i):
 
             term = choose_func(i, j + 1)
 
-            # ADDING * TO ROW WHENEVER ODD
-            if term % 2 == 1:
+            if term % 2 == 1:       # Adding * to row whenever odd
                 row.append("*")
             else:
                 row.append(" ")
 
-        # ADD ROW TO TRIANGLE
-        triangle.append(row)
+        triangle.append(row)    # Add row to triangle
 
     if display:
 
@@ -48,10 +48,16 @@ def sierpinski_triangle(dim, choose_func, display):
 
 
 def run_time(func, *args):
+    """
+    Calculate the run time of a function
+
+    :param func: function to be tested
+    :param args: arguments to be passed to function
+    :return: runtime of the function in seconds
+    """
 
     start = clock()
 
-    # RUN GIVEN FUNCTION
     func(*args)
 
     end = clock()
@@ -60,10 +66,18 @@ def run_time(func, *args):
 
 
 def choose_simple(n, k):
+    """
+    Computes the value of ”n choose k”
+
+    :param n: Amount to choose from
+    :param k: Amount to be chosen
+    :return: Value of "n choose k"
+    """
 
     # VALIDATE INPUT
-    assert k <= n, "k can not be greater than n "
-    assert n >= 0, "n and k must both be positive"
+    assert type(n) == int and type(k) == int, "n and k must be integers"
+    assert k <= n, "k can not be greater than n"
+    assert n >= 0 and k >= 0, "n and k must both be positive"
 
     # BASE CASE
     if k == 0 or k == n:
@@ -75,10 +89,18 @@ def choose_simple(n, k):
 
 
 def choose_mem(n, k):
+    """
+    Computes the value of ”n choose k” using memoization
+
+    :param n: Amount to choose from
+    :param k: Amount to be chosen
+    :return: Value of "n choose k"
+    """
 
     # VALIDATE INPUT
-    assert k <= n, "k can not be greater than n "
-    assert n >= 0, "n and k must both be positive"
+    assert type(n) == int and type(k) == int, "n and k must be integers"
+    assert k <= n, "k can not be greater than n"
+    assert n >= 0 and k >= 0, "n and k must both be positive"
 
     # CHECK CACHE
     if (n, k) in __choose_cache:
@@ -137,19 +159,18 @@ def test_choose_simple(triangle_size):
 
 if __name__ == "__main__":
 
+    # INITIALISE CACHE FOR CHOOSE_MEM
     __choose_cache = {}
 
+    # PRINT TRIANGLE
     sierpinski_triangle(16, choose_mem, True)
-
-    test_choose_mem(16)
-
     print()
 
+    # PRINT CHOOSE_MEM
+    print("test_choose_mem(16)")
+    test_choose_mem(16)
+    print()
+
+    # PRINT CHOOSE_SIMPLE
+    print("test_choose_simple(16)")
     test_choose_simple(16)
-
-
-
-
-
-
-

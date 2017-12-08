@@ -118,9 +118,9 @@ def run_time(func, *args):
     :param args: arguments to be passed to function
     :return: runtime of the function in seconds
     """
+
     start = clock()
 
-    # RUN GIVEN FUNCTION
     func(*args)
 
     end = clock()
@@ -145,14 +145,12 @@ def test_func():
         ratio = round(su_time / u_time, 2)
 
         # PRINT RESULTS
-        print(' ' * (6 - len(str(i))), i, 'u:', u_time, end="")
-        print(' ' * (6 - len(str(u_time))), 'su:', su_time, end="")
-        print(' ' * (6 - len(str(su_time))), 'ratio:', ratio)
+        print(' ' * (6 - len(str(i))), i, 'u:', u_time,
+              ' ' * (6 - len(str(u_time))), 'su:', su_time,
+              ' ' * (6 - len(str(su_time))), 'ratio:', ratio)
 
 
 if __name__ == "__main__":
 
     # MAIN PROGRAM
     test_func()
-
-

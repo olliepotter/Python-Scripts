@@ -1,9 +1,8 @@
 import os
-from Coursework_3 import choose
 from operator import itemgetter
 
 
-def visit(dname, pass_test_func, max_n_results=100):
+def visit(dname, pass_test_func, max_n_results, no_files_found=[], first_run = True):
     """
     Recursively traverses the filesystem appending file paths and sizes to a
         list, dependant on a given test function
@@ -11,12 +10,17 @@ def visit(dname, pass_test_func, max_n_results=100):
     :param dname: Directory name
     :param pass_test_func: Test
     :param max_n_results: Max number of results to be returned
-    :return:
+    :param no_files_found: Used to return max number of results
+    :param first_run: Test if first run so no_files_found can be reset
+    :return: A list of file paths that pass the test function
     """
 
     directories = os.listdir(dname)
     files = []
-    global counter
+
+    # REFRESH COUNTER ON FIRST RUN
+    if first_run:
+        no_files_found = []
 
     # LOOP THROUGH ALL DIRECTORIES IN CURRENT DIRECTORY
     for f in directories:
@@ -24,24 +28,29 @@ def visit(dname, pass_test_func, max_n_results=100):
 
                 path = os.path.join(dname, f)
 
+                if "$WINDOWS.~BT" in path:
+                    continue
+                elif "JetBrains" in path:
+                    continue
+
                 # BASE CASE - IF FILE THEN STOP
                 if os.path.isfile(path):
-                    if counter < max_n_results:
+                    if len(no_files_found) < max_n_results:
                         if pass_test_func(path):
                             files.append([path, os.path.getsize(path)])
-                            counter += 1
+                            no_files_found += [0]
                     else:
                         return files
 
                 # RECURSIVE CASE - IF DIRECTORY CONTINUE RECURSION
                 elif os.path.isdir(path):
-                    files = files + visit(path, pass_test_func, max_n_results)
+                    files = files + visit(path, pass_test_func, max_n_results, no_files_found, False)
 
-        # DEAL WITH PROTECTED FILES FROM OS
+        # IGNORE PROTECTED FILES FROM OS
         except PermissionError:
             continue
 
-        # DEAL WITH TEMPORARY FILES
+        # IGNORE TEMPORARY FILES
         except FileNotFoundError:
             continue
 
@@ -53,21 +62,18 @@ def find_larger(path, max_n_results=10):
     Recursively traverses from a given directory and prints file paths of files
         with suffix .txt and that are greater than 100,000 bytes
 
-    :param path: The directory to begin traversing through
-    :param max_n_results:
+    :param path: Directory to begin traversing through
+    :param max_n_results: Max number of results to be returned
     :return:
     """
 
     # GET FILE PATHS
     paths = visit(path, lambda file: True if os.path.getsize(file) > 100000 and file.endswith(".txt") else False, max_n_results)
 
-    # SORT LIST
-    paths.sort(key=itemgetter(1), reverse=True)
-
     # CREATE DICTIONARY
-    dictionary = {path: size for (path, size) in paths}
+    dictionary = create_sorted_dictionary(paths, True)
 
-    # FORMAT PRINT
+    # PRINT
     print("Finding .txt files with size larger than 100000 bytes")
     print_dictionary(dictionary)
 
@@ -77,74 +83,69 @@ def find_smaller(path, max_n_results=10):
     Recursively traverses from a given directory and prints file paths of files
         with suffix .txt and that are smaller than 100 bytes
 
-    :param path: The directory to begin traversing through
-    :param max_n_results:
-    :return:
+    :param path: Directory to begin traversing through
+    :param max_n_results: Max number of results to be returned
     """
 
     # GET FILE PATHS
     paths = visit(path, lambda file: True if os.path.getsize(file) < 100 and file.endswith(".txt") else False, max_n_results)
 
-    # SORT LIST
-    paths.sort(key=itemgetter(1), reverse=False)
-
     # CREATE DICTIONARY
-    dictionary = {path: size for (path, size) in paths}
+    dictionary_of_files = create_sorted_dictionary(paths, False)
 
-    # FORMAT PRINT
+    # PRINT
     print("Finding .txt files with size smaller than 100 bytes")
-    print_dictionary(dictionary)
+    print_dictionary(dictionary_of_files)
 
 
 def find_type(path, max_n_results=10):
     """
+    Recursively traverses from a given directory and prints files paths of files
+        with suffix .txt in descending order of file size
 
-
-    :param path:
-    :param max_n_results:
-    :return:
+    :param path: Directory to begin traversing through
+    :param max_n_results: Max number of results to be returned
     """
 
     # GET FILE PATHS
     paths = visit(path, lambda file: True if file.endswith(".txt") else False, max_n_results)
 
-    # SORT LIST
-    paths.sort(key=itemgetter(1), reverse=True)
-
     # CREATE DICTIONARY
-    dictionary = {path: size for (path, size) in paths}
+    dictionary_of_files = create_sorted_dictionary(paths, True)
 
-    # FORMAT PRINT
+    # PRINT
     print("Finding .txt files")
-    print_dictionary(dictionary)
+    print_dictionary(dictionary_of_files)
 
 
 def print_dictionary(dictionary):
-
-    for path, size in dictionary.items():
-        print("    ", size, "    ", path)
-
-
-def print_list(any_list):
     """
-    Prints all items in a list
+    Formats the print of a given dictionary
 
-    :param any_list: a list
-    :param max_n_items: Max number of values to be printed
-    :return:
+    :param dictionary: dictionary of terms
     """
 
-    for item in any_list:
-        print(item)
+    for path, size in dictionary.items():   # List through all items
+        print(' ' * (8 - len(str(size))), size, ' ' * 4, path)
+        # print("    ", size, "    ", path)   # Print items
 
 
-counter = 0
-print(choose.run_time(find_type, "C:/", 20))
-print()
-# find_smaller("..\Coursework_3")
+def create_sorted_dictionary(paths, ascending):
+    """
+    Creates a dictionary sorted in ascending/descending order of file size
+
+    :param paths: List of file paths
+    :param ascending: Whether to print in ascending order of file size
+    :return: Sorted dictionary
+    """
+
+    paths.sort(key=itemgetter(1), reverse=ascending)     # Sort list
+    return {path: size for (path, size) in paths}     # Create Dictionary
 
 
+if __name__ == "__main__":
 
-
-
-
+    # FIND .TXT FILES ON C:/ DRIVE
+    find_larger("C:/")
+    find_smaller("C:/")
+    find_type("C:/")
