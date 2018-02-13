@@ -1,95 +1,165 @@
 import numpy as np
 
-# x = np.mat("2 -1 2; 1 -2 1; 3 -1 2")
-# x = np.matrix([
-#  [ 2,  -1, 2],
-#  [ 1,  -2, 1],
-#  [3, -1, 2]], dtype='float')
 
-test_matrix = np.array([
-    [2,-1,2],
-    [1,-2,1],
-    [3,-1,2],
-],dtype=np.float)
+def ref(matrix):
 
-large_matrix = np.array([
-    [2,-1,2,1],
-    [1,-2,1,1],
-    [3,-1,2,1],
-    [3,-1,2,1],
-],dtype=np.float)
+    # FIND MATRIX LENGTH
+    matrix_dimensions = np.shape(matrix)
+    row_length = matrix_dimensions[0]
+    col_length = matrix_dimensions[1]
 
-solutions = np.array([10,8,11])
+    # STARTS AT 1 ON DIAGONAL AND SORTS BELOW 0'S
+    for column in range(col_length):
+        for row in range(row_length):
+            if column == row:
+                matrix[row] = matrix[row] / matrix[row, column]
+            elif column <= row:
+                reduce_to_zero(row, column, row_length, matrix)
 
+    # STOP NEGATIVE 0'S
+    for i in range(row_length):
+        for j in range(col_length):
+            if matrix[i, j] == -0:
+                matrix[i, j] = 0
 
-def ref(matrix, array):
-
-    # Find length of matrix
-    length = int(matrix.size ** 0.5)
-
-    # if not == 1 make it = 1
-    if matrix[0, 0] != 1:
-        make_first_item_one(matrix, array)
-
-    print("Updated, changed [0,0] to equal 1: \n", matrix)
-
-    # Check remaining values on first row
-    multipliers = check_column(matrix, array, length, 0, 1)      # multipliers  = [[value, row],[value, row]]
-    print("Multipliers: ", multipliers)
-
-    for multiplier in multipliers:
-        matrix[multiplier[1]] = matrix[multiplier[1]] - multiplier[0] * matrix[0]
-        # row = row- (multiplier * value in column one)
-
-    print("Updated, changed all rows below row 0 on first column: \n", matrix)
-
-    # NEXT STEP DEAL WITH THE -1.5 ON ROW 2, INDEX[1]
+    return matrix
 
 
-def make_first_item_one(matrix, array):
-    """
-    Makes item at position [0,0] in a matrix equal to 1
-    :param matrix: matrix of values
-    :param array: array of solutions to matrix
-    :param length: length of a square matrix
-    :return:
-    """
-
-    # Find multiplier needed to make [0,0] = 1
-    multiplier = 1 / matrix[0, 0]
-
-    # Update values on row
-    matrix[0] = matrix[0] * multiplier
-
-    # Update solution value
-    array[0] = array[0] * multiplier
+def reduce_to_zero(row_start, col_to_change, row_length, matrix):
+    for i in range(row_start, row_length):
+        matrix[i] = matrix[i] + (-matrix[i, col_to_change] * matrix[col_to_change])
 
 
-def check_column(matrix, solutions, length, column, row_start = 0):
-    """
-    Given a starting row, check all values below in the given column
-    :param matrix: Matrix of values
-    :param solutions:
-    :param length: Length of square matrix
-    :param column: Column to check values from
-    :param row_start: Inclusive, starting row
-    :return: A list of arrays containing [value found, row number]
-    """
+def solve_matrix(augmented_matrix):
 
-    values_below = []
+    # FIND COLUMN LENGTH
+    matrix_dimensions = np.shape(augmented_matrix)
+    col_length = matrix_dimensions[0]
 
-    for row in range(length):
-        if row_start > row:
-            continue
-        values_below.append([matrix[row, column], row])
+    # PRINT MATRICES FOR SOLUTIONS
+    solution_matrix = augmented_matrix[:,col_length]
+    print("Solution Matrix: \n", solution_matrix)
 
-    return values_below
+    # PRINT NEW R.E.F MATRIX
+    augmented_matrix = np.delete(augmented_matrix, col_length, axis=1)
+    print("REF Matrix: \n", augmented_matrix)
+
+    # RETURN SOLUTIONS
+    return np.linalg.solve(augmented_matrix, solution_matrix)
 
 
-def minus_row_ones(matrix, row_number, row_ones):
-    print()
+def create_two_by_two(points_before):
+
+    new_matrix = np.array([
+        [],
+        [],
+    ], dtype=float)
+
+    array_row = []
+
+    for i in range(0,2):
+        point = points_before[i]
+        point_x = point[0, 0]
+        point_y = point[0, 1]
+        array_row.append([point_x, point_y])
+
+    new_matrix = np.append(new_matrix, array_row, axis=1)
+    return new_matrix
+
+
+def create_solutions(points_after):
+    points = points_after[0]
+
+    new_matrix = np.array([
+        [],
+        [],
+    ], dtype=float)
+
+    array_rows = []
+
+    array_rows.append([points[0, 0]])
+    array_rows.append([points[0, 1]])
+
+    new_matrix = np.append(new_matrix, array_rows, axis=1)
+
+    flipped_matrix = np.flip(new_matrix, axis=0)
+
+    return [new_matrix, flipped_matrix]
+
+
+def step_three(new_matrix, flipped_matrix, two_by_two):
+    print("New Matrix \n", new_matrix)
+    print("Flipped Matrix \n", flipped_matrix)
+    print("Two by two: \n", two_by_two)
+
+    new_one = np.append(two_by_two, new_matrix, axis=1)
+    new_two = np.append(two_by_two, flipped_matrix, axis=1)
+
+    return_matrix = np.array([
+        [],
+        [],
+    ], dtype=float)
+
+    add_list = []
+
+    add_list.append(solve_matrix(new_one))
+    add_list.append(solve_matrix(new_two))
+
+    return_matrix = np.append(return_matrix, add_list, axis=1)
+
+    return return_matrix
 
 
 if __name__ == "__main__":
-    print("Original Matrix: \n", test_matrix)
-    ref(test_matrix, solutions)
+
+    # CREATE MATRIX
+    aug_matrix = np.array([
+        [1, 1, -1, 1],
+        [8, 3, -6, 1],
+        [-4, -1, 3, 1],
+    ], dtype=float)
+
+    # # WORKS
+    # aug_matrix = np.array([
+    #     [1, 1, -1, 1],
+    #     [8, 3, -6, 1],
+    #     [-4, -1, 3, 1],
+    # ], dtype=float)
+
+    print("Original Matrix: \n", aug_matrix)
+
+    # PRODUCE R.E.F
+    ref_matrix = ref(aug_matrix)
+    print("REF Matrix: \n", ref_matrix)
+
+    # SOLVE MATRIX
+    print("Solutions \n", solve_matrix(ref_matrix))
+
+
+    # new_matrix = np.append(aug_matrix, solutions, axis=1)
+    # print("Joint Matrix: \n", new_matrix)
+
+    ################################################################
+
+    # POINTS BEFORE
+    x = np.matrix(
+        [[1., 2.],
+         [2., 1.],
+         [0., 3.],
+         [2., 0.5]])
+
+    # POINTS AFTER
+    y = np.matrix(
+        [[2.75, 3.25],
+         [3.25, 2.75],
+         [2.25, 3.75],
+         [2.875, 2.125]])
+
+    matrices = create_solutions(y)
+    tm = step_three(matrices[0], matrices[1], create_two_by_two(x))
+    print("Transition Matrix: \n", tm)
+
+
+
+
+
